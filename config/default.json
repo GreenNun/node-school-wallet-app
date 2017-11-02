@@ -2,8 +2,14 @@
   "server": {
 	"port": 3000
   },
-  "mongo": {
-	"uri": "mongodb://localhost/school-wallet"
+  "db": {
+	"url": "mongodb://localhost/school-wallet"
   },
-  "isHttps": false
+  "certificate": {
+	"key": "fixtures/key.key",
+	"cert": "fixtures/cert.crt"
+  },
+  "protocol": {
+	"isHTTP": false
+  }
 }
