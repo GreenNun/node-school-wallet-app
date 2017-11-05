@@ -97,6 +97,7 @@ class App extends Component {
 		const cardHistory = data.transactions > 0 ? App.prepareHistory(cardsList, data.transactions) : [];
 
 		this.state = {
+			user: data.user,
 			cardsList,
 			cardHistory,
 			user: data.user,
@@ -199,9 +200,7 @@ class App extends Component {
 		const activeCard = cardsList[activeCardIndex];
 
 		const inactiveCardsList = cardsList.filter((card, index) => (index === activeCardIndex ? false : card));
-		const filteredHistory = cardHistory.filter((data) => {
-			return Number(data.cardId) == activeCard.id;
-		});
+		const filteredHistory = cardHistory.filter((data) => Number(data.cardId) == activeCard.id);
 
 		if (cardsList.length > 0 && activeCardIndex !== 'new_card')
 			return (

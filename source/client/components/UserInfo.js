@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'emotion/react';
 import PropTypes from 'prop-types';
 
@@ -19,11 +20,11 @@ const Avatar = styled.img`
 const UserInfo = ({user}) => (
 	<User>
 		<Avatar src='/assets/avatar.png' />
-		{user.name}
+		{`${user.name} ${user.surname}`}
 	</User>
 );
 
-User.propTypes = {
+UserInfo.propTypes = {
 	user: PropTypes.shape({
 		login: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired
