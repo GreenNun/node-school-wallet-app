@@ -29,64 +29,48 @@ schedule.scheduleJob('50 * * * * *', async () => {
 });
 
 async function scheduleAutoPaymentJob() {
-	const cond = {
-		// date: { '$gte': new Date() },
-		date: {'$lt': new Date()},
-		isDone: false
-	};
-
-	await new AutoPaymentModel().getMany(cond)
-		.then(async (result) => {
-			console.log('search result: ' + result);
-			result.forEach(async (autoPayment) => {
-				const card = await new CardsModel().get(autoPayment.cardId);
-				await new CardsModel().withdraw(autoPayment.cardId, autoPayment.sum)
-					.then(async () => {
-						if (autoPayment.receiverType === 'cardPayment') {
-							return await new TransactionModel()
-								.create({
-									cardId: autoPayment.cardId,
-									userId: card.userId,
-									type: 'withdrawCard',
-									data: {
-										cardNumber: autoPayment.receiverNumber
-									},
-									time: new Date().toISOString(),
-									sum: autoPayment.sum
-								})
-								.then(async () => {
-									return await setAutoPaymentDone(autoPayment);
-								})
-								.catch((err) => {
-									console.error('AutoPayment transaction Error')
-								});
-						} else if (autoPayment.receiverType === 'phonePayment') {
-							return await new TransactionModel()
-								.create({
-									cardId: autoPayment.cardId,
-									userId: card.userId,
-									type: 'withdrawCard',
-									data: {
-										phoneNumber: autoPayment.receiverNumber
-									},
-									time: new Date().toISOString(),
-									sum: autoPayment.sum
-								})
-								.then(async (result) => {
-									return await setAutoPaymentDone(autoPayment);
-								}).catch((err) => {
-									console.error('AutoPayment transaction Error')
-								});
-						}
-						// else {
-						// 	new AutoPaymentModel()._remove(autoPayment.id);
-						// }
-					}).catch((err) => {
-						console.error('AutoPayment Error');
-					})
-			})
-		});
-	console.log('schedule!');
+	try {
+		const cond = {
+			// date: { '$gte': new Date() },
+			date: {'$lt': new Date(Date.now())},
+			isDone: false
+		};
+		const autoPaymentModel = new AutoPaymentModel();
+		const cardModel = new CardsModel();
+		const transactionModel = await new TransactionModel();
+		const autoPayments = await autoPaymentModel.getMany(cond);
+		for (const autoPayment of autoPayments){
+			await cardModel.withdraw(autoPayment.cardId, autoPayment.sum);
+			if (autoPayment.receiverType === 'cardPayment') {
+				await transactionModel.create({
+					cardId: autoPayment.cardId,
+					userId: card.userId,
+					type: 'withdrawCard',
+					data: {
+						cardNumber: autoPayment.receiverNumber
+					},
+					time: new Date().toISOString(),
+					sum: autoPayment.sum
+				});
+			}
+			if (autoPayment.receiverType === 'phonePayment') {
+				await transactionModel.create({
+					cardId: autoPayment.cardId,
+					userId: card.userId,
+					type: 'withdrawCard',
+					data: {
+						phoneNumber: autoPayment.receiverNumber
+					},
+					time: new Date().toISOString(),
+					sum: autoPayment.sum
+				});
+			}
+			await setAutoPaymentDoneOrExtend(autoPayment);
+		}
+		console.log('schedule!');
+	} catch (e) {
+		console.error('Autopayment error:', e.message)
+	}
 }
 
 async function setAutoPaymentDoneOrExtend(autoPayment) {
