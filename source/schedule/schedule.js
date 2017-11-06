@@ -37,7 +37,7 @@ async function scheduleAutoPaymentJob() {
 		};
 		const autoPaymentModel = new AutoPaymentModel();
 		const cardModel = new CardsModel();
-		const transactionModel = await new TransactionModel();
+		const transactionModel = new TransactionModel();
 		const autoPayments = await autoPaymentModel.getMany(cond);
 		for (const autoPayment of autoPayments){
 			await cardModel.withdraw(autoPayment.cardId, autoPayment.sum);
