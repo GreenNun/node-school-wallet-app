@@ -21,7 +21,11 @@ class AutoPayments extends DbModel {
 			&& Object.prototype.hasOwnProperty.call(autoPayment, 'sum')
 			&& Object.prototype.hasOwnProperty.call(autoPayment, 'date')
 			&& Object.prototype.hasOwnProperty.call(autoPayment, 'receiverType')
-			&& Object.prototype.hasOwnProperty.call(autoPayment, 'receiverNumber');
+			&& Object.prototype.hasOwnProperty.call(autoPayment, 'receiverNumber')
+			&& Object.prototype.hasOwnProperty.call(autoPayment, 'dateRepeat')
+			&& (autoPayment.dateRepeat === 'none'
+				|| autoPayment.dateRepeat === 'weekly'
+				|| autoPayment.dateRepeat === 'monthly') ;
 
 		if (isDataValid) {
 			const newAutoPayment = Object.assign({}, autoPayment, {
@@ -43,6 +47,22 @@ class AutoPayments extends DbModel {
 	 */
 	async setDone(id) {
 		await this._update({id}, {isDone:  false});
+	}
+
+	async extendForWeek(item) {
+		const id = item.id;
+		let newDate = new Date(item.date);
+		// newDate = newDate.setMonth(newDate.getMonth(), newDate.getDay() + 7);
+
+		await this._update({id}, {date:  newDate});
+	}
+
+	async extendForMonth(item) {
+		const id = item.id;
+		let newDate = new Date(item.date);
+		// newDate = newDate.setMonth(newDate.getMonth() + 1);
+
+		await this._update({id}, {date:  newDate});
 	}
 }
 

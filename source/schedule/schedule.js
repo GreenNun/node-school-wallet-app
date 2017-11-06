@@ -89,6 +89,14 @@ async function scheduleAutoPaymentJob() {
 	console.log('schedule!');
 }
 
-async function setAutoPaymentDone(autoPayment) {
-	await new AutoPaymentModel().setDone(autoPayment.id);
+async function setAutoPaymentDoneOrExtend(autoPayment) {
+	if (autoPayment.dateRepeat === 'none') {
+		await new AutoPaymentModel().setDone(autoPayment.id);
+	} else if (autoPayment.dateRepeat === 'weekly') {
+		await new AutoPaymentModel().extendForWeek(autoPayment);
+	} else if (autoPayment.dateRepeat === 'monthly') {
+		await new AutoPaymentModel().extendForMonth(autoPayment);
+	} else {
+		console.error('AutoPayment DoneOrExtend Error');
+	}
 }

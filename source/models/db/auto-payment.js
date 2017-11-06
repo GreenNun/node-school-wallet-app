@@ -34,6 +34,10 @@ const AutoPayment = mongoose.model('AutoPayment', {
 	isDone: {
 		type: Boolean,
 		required: true
+	},
+	dateRepeat: {
+		type: String,
+		required: true
 	}
 });
 
