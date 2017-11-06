@@ -10,11 +10,12 @@ import {
 	History,
 	Prepaid,
 	MobilePayment,
-	Withdraw
+	Withdraw,
 } from './';
 
 import './fonts.css';
 import CreateNewCard from "./CreateNewCard";
+import MakeChildrenCard from './MakeChildrenCard';
 
 injectGlobal([`
 	html,
@@ -229,6 +230,7 @@ class App extends Component {
 								activeCard={activeCard}
 								inactiveCardsList={inactiveCardsList}
 								onTransaction={() => this.onTransaction()}/> : ''}
+							<MakeChildrenCard activeCard={activeCard}/>
 						</Workspace>
 					</CardPane>
 				</Wallet>
