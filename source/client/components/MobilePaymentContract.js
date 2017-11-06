@@ -239,7 +239,7 @@ class MobilePaymentContract extends Component {
 						<Currency>₽</Currency>
 					</InputField>
 					<InputField>
-						<Label>Отложенный платёж</Label>
+						<Label>Автоплатёж</Label>
 						<Switch defaultChecked={false} onChange={(checked) => this.onChangeCheckedValue(checked)}/>
 					</InputField>
 					<InputField>
@@ -249,7 +249,8 @@ class MobilePaymentContract extends Component {
 					</InputField>
 					<InputField>
 						<Label>Повторять платёж</Label>
-						<Select defaultValue="none" onChange={(dateRepeat) => this.onChangeSelectValue(dateRepeat)}>
+						<Select defaultValue="none" disabled={!checked}
+								onChange={(dateRepeat) => this.onChangeSelectValue(dateRepeat)}>
 							<Select.Option value="none">Никогда</Select.Option>
 							<Select.Option value="weekly">Еженедельно</Select.Option>
 							<Select.Option value="monthly">Ежемесячно</Select.Option>
