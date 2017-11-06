@@ -112,7 +112,8 @@ const History = ({cardHistory}) => {
 			if (isTodayHistoryItem) {
 				result.push((
 					<HistoryItem key={index}>
-						<HistoryItemIcon bankSmLogoUrl={item.card.theme.bankSmLogoUrl} />
+						<HistoryItemIcon
+							bankSmLogoUrl={item.card.hasOwnProperty('theme') ? item.card.theme.bankSmLogoUrl : ''}/>
 						<HistoryItemTitle>
 							{getHistoryItemTitle(item)}
 						</HistoryItemTitle>
