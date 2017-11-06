@@ -49,7 +49,7 @@ async function scheduleAutoPaymentJob() {
 					data: {
 						cardNumber: autoPayment.receiverNumber
 					},
-					time: new Date().toISOString(),
+					time: new Date(Date.now()).toISOString(),
 					sum: autoPayment.sum
 				});
 			}
@@ -61,7 +61,7 @@ async function scheduleAutoPaymentJob() {
 					data: {
 						phoneNumber: autoPayment.receiverNumber
 					},
-					time: new Date().toISOString(),
+					time: new Date(Date.now()).toISOString(),
 					sum: autoPayment.sum
 				});
 			}
