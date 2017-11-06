@@ -118,7 +118,7 @@ class MobilePaymentContract extends Component {
 			event.preventDefault();
 		}
 
-		const {sum, phoneNumber, commission, checked, dateAutoPay} = this.state;
+		const {sum, phoneNumber, commission, checked, dateAutoPay, dateRepeat} = this.state;
 
 		const isNumber = !isNaN(parseFloat(sum)) && isFinite(sum);
 		if (!isNumber || sum === 0) {
@@ -132,11 +132,12 @@ class MobilePaymentContract extends Component {
 				receiverNumber: phoneNumber,
 				sum,
 				date: dateAutoPay,
-				receiverType: 'phonePayment'
+				receiverType: 'phonePayment',
+				dateRepeat
 			};
 			axios
 				.post(`/cards/${activeCard.id}/auto-payment`, sendData)
-				.then(() => this.props.onPaymentSuccess({sum, phoneNumber, commission, dateAutoPay}));
+				.then(() => this.props.onPaymentSuccess({sum, phoneNumber, commission, dateAutoPay, dateRepeat}));
 		} else {
 			axios
 				.post(`/cards/${activeCard.id}/pay`, {phoneNumber, sum})
