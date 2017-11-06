@@ -9,12 +9,12 @@ class AutoPayments extends DbModel {
 		super('auto-payment');
 	}
 
-	// /**
-	//  * Добавляет автоплатёж
-	//  *
-	//  * @param {Object} autoPayment описание автоплатежа
-	//  * @returns {Promise.<Object>}
-	//  */
+	/**
+	 * Добавляет автоплатёж
+	 *
+	 * @param {Object} autoPayment описание автоплатежа
+	 * @returns {Promise.<Object>}
+	 */
 	async create(autoPayment) {
 		const isDataValid = autoPayment
 			&& Object.prototype.hasOwnProperty.call(autoPayment, 'cardId')
@@ -33,6 +33,16 @@ class AutoPayments extends DbModel {
 		}
 
 		throw new ApplicationError('Auto-payment data is invalid', 400);
+	}
+
+	/**
+	 * Отметить автоплатёж завершенным
+	 *
+	 * @param id
+	 * @returns {Promise.<void>}
+	 */
+	async setDone(id) {
+		await this._update({id}, {isDone:  false});
 	}
 }
 

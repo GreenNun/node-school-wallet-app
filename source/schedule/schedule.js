@@ -4,54 +4,49 @@ const AutoPaymentModel = require('../models/auto-payments');
 const CardsModel = require('../models/cards');
 const TransactionModel = require('../models/transactions');
 
-// const autoPaymentModel = new AutoPaymentModel();
-// const autoPaymentModel = new CardsModel();
-// const autoPaymentModel = new TransactionModel();
-
-schedule.scheduleJob('0 * * * * *', () => {
-	scheduleAutoPaymentJob();
+schedule.scheduleJob('0 * * * * *', async () => {
+	await scheduleAutoPaymentJob();
 });
 
-schedule.scheduleJob('10 * * * * *', () => {
-	scheduleAutoPaymentJob();
+schedule.scheduleJob('10 * * * * *', async () => {
+	await scheduleAutoPaymentJob();
 });
 
-schedule.scheduleJob('20 * * * * *', () => {
-	scheduleAutoPaymentJob();
+schedule.scheduleJob('20 * * * * *', async () => {
+	await scheduleAutoPaymentJob();
 });
 
-schedule.scheduleJob('30 * * * * *', () => {
-	scheduleAutoPaymentJob();
+schedule.scheduleJob('30 * * * * *', async () => {
+	await scheduleAutoPaymentJob();
 });
 
-schedule.scheduleJob('40 * * * * *', () => {
-	scheduleAutoPaymentJob();
+schedule.scheduleJob('40 * * * * *', async () => {
+	await scheduleAutoPaymentJob();
 });
 
-schedule.scheduleJob('50 * * * * *', () => {
-	scheduleAutoPaymentJob();
+schedule.scheduleJob('50 * * * * *', async () => {
+	await scheduleAutoPaymentJob();
 });
 
-function scheduleAutoPaymentJob() {
-	// { '$where': 'this.created_on.toJSON().slice(0, 10) == "2012-07-14"' }
-	const today = new Date();
-	const condition = {
-		'date': {
-			// "$gte": new Date(today.getYear(), today.getMonth(), today.getDay() - 1),
-			"$lt": new Date(today.getYear(), today.getMonth(), today.getDay() + 1)
-		}
+async function scheduleAutoPaymentJob() {
+	const cond = {
+		// date: { '$gte': new Date() },
+		date: {'$lt': new Date()},
+		isDone: true
 	};
 
-	new AutoPaymentModel().getMany(condition)
-		.then(async function (result) {
+	await new AutoPaymentModel().getMany(cond)
+		.then(async (result) => {
 			console.log('search result: ' + result);
 			result.forEach(async (autoPayment) => {
+				const card = await new CardsModel().get(autoPayment.cardId);
 				await new CardsModel().withdraw(autoPayment.cardId, autoPayment.sum)
 					.then(async () => {
 						if (autoPayment.receiverType === 'cardPayment') {
-							await new TransactionModel()
+							return await new TransactionModel()
 								.create({
 									cardId: autoPayment.cardId,
+									userId: card.userId,
 									type: 'withdrawCard',
 									data: {
 										cardNumber: autoPayment.receiverNumber
@@ -60,12 +55,16 @@ function scheduleAutoPaymentJob() {
 									sum: autoPayment.sum
 								})
 								.then(async () => {
-									await setAutoPaymentDone(autoPayment);
+									return await setAutoPaymentDone(autoPayment);
+								})
+								.catch((err) => {
+									console.error('AutoPayment transaction Error')
 								});
 						} else if (autoPayment.receiverType === 'phonePayment') {
-							await new TransactionModel()
+							return await new TransactionModel()
 								.create({
 									cardId: autoPayment.cardId,
+									userId: card.userId,
 									type: 'withdrawCard',
 									data: {
 										phoneNumber: autoPayment.receiverNumber
@@ -73,12 +72,17 @@ function scheduleAutoPaymentJob() {
 									time: new Date().toISOString(),
 									sum: autoPayment.sum
 								})
-								.then(async () => {
-									await setAutoPaymentDone(autoPayment);
+								.then(async (result) => {
+									return await setAutoPaymentDone(autoPayment);
+								}).catch((err) => {
+									console.error('AutoPayment transaction Error')
 								});
-						} else {
-							console.error('AutoPayment Error')
 						}
+						// else {
+						// 	new AutoPaymentModel()._remove(autoPayment.id);
+						// }
+					}).catch((err) => {
+						console.error('AutoPayment Error');
 					})
 			})
 		});
@@ -86,11 +90,5 @@ function scheduleAutoPaymentJob() {
 }
 
 async function setAutoPaymentDone(autoPayment) {
-	await new AutoPaymentModel()._update({
-		id: autoPayment.id
-	}, {
-		$set: {
-			isDone: true
-		}
-	})
+	await new AutoPaymentModel().setDone(autoPayment.id);
 }
