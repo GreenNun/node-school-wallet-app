@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'emotion/react';
 import axios from 'axios';
-import {Switch, DatePicker} from 'antd';
+import {Switch, DatePicker, Select} from 'antd';
 import locale from 'antd/lib/date-picker/locale/ru_RU';
 import moment from 'moment';
 import 'moment/locale/ru';
@@ -89,7 +89,8 @@ class MobilePaymentContract extends Component {
 			sum: 0,
 			commission: 3,
 			checked: false,
-			dateAutoPay: moment().add(1, 'days').toDate()
+			dateAutoPay: moment().add(1, 'days').toDate(),
+			dateRepeat: 'none'
 		};
 	}
 
@@ -186,6 +187,16 @@ class MobilePaymentContract extends Component {
 	}
 
 	/**
+	 * Обработка изменения дат повтора
+	 * @param {String} dateRepeat Дата автоплатежа
+	 */
+	onChangeSelectValue(dateRepeat) {
+		this.setState({
+			dateRepeat
+		});
+	}
+
+	/**
 	 * Откличение старых дат
 	 * @param {Date} current Выбранная дата платежа
 	 */
@@ -234,6 +245,14 @@ class MobilePaymentContract extends Component {
 						<Label>Дата платежа</Label>
 						<DatePicker defaultValue={date} locale={locale} disabled={!checked}
 									disabledDate={this.disabledDate} onChange={(date) => this.onChangeDateValue(date)}/>
+					</InputField>
+					<InputField>
+						<Label>Повторять платёж</Label>
+						<Select defaultValue="none" onChange={(dateRepeat) => this.onChangeSelectValue(dateRepeat)}>
+							<Select.Option value="none">Никогда</Select.Option>
+							<Select.Option value="weekly">Еженедельно</Select.Option>
+							<Select.Option value="monthly">Ежемесячно</Select.Option>
+						</Select>
 					</InputField>
 					<Commission>Размер коммиссии составляет {commission} ₽</Commission>
 					<Underline />
