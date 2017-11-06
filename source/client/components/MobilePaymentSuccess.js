@@ -73,12 +73,24 @@ const RepeatPayment = styled.button`
 `;
 
 const MobilePaymentSuccess = ({transaction, repeatPayment}) => {
-	const {sum, phoneNumber, commission, dateAutoPay, id} = transaction;
+	const {sum, phoneNumber, commission, dateAutoPay, id, dateRepeat} = transaction;
+	let dateRepeatString;
+	switch (dateRepeat) {
+		case 'weekly':
+			dateRepeatString = 'Еженедельно';
+			break;
+		case 'monthly':
+			dateRepeatString = 'Ежемесячно';
+			break;
+		default:
+			dateRepeatString = 'Никогда';
+			break;
+	}
 
 	return (
 		<MobilePaymentLayout>
 			<SuccessIcon />
-			<Header>МегаФон (Россия)</Header>
+			<Header>Оператор (Россия)</Header>
 			<Sum>{sum} ₽</Sum>
 			<CommissionTips>В том числе комиссия {commission} ₽</CommissionTips>
 			<Section>
@@ -88,6 +100,10 @@ const MobilePaymentSuccess = ({transaction, repeatPayment}) => {
 			<Section>
 				<SectionLabel>Номер телефона</SectionLabel>
 				<SectionValue>{phoneNumber}</SectionValue>
+			</Section>
+			<Section>
+				<SectionLabel>Повторять платёж</SectionLabel>
+				<SectionValue>{dateRepeatString}</SectionValue>
 			</Section>
 			<Instruction>
 				Мы пришлем чек на sam@yandex.ru. Вы можете изменить email в «Настройках».
@@ -103,6 +119,7 @@ MobilePaymentSuccess.propTypes = {
 		cardNumber: PropTypes.string,
 		commission: PropTypes.number,
 		dateAutoPay: PropTypes.instanceOf(Date),
+		dateRepeat: PropTypes.string,
 		id: PropTypes.number
 	}).isRequired,
 	repeatPayment: PropTypes.func.isRequired
