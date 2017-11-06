@@ -32,7 +32,7 @@ async function scheduleAutoPaymentJob() {
 	const cond = {
 		// date: { '$gte': new Date() },
 		date: {'$lt': new Date()},
-		isDone: true
+		isDone: false
 	};
 
 	await new AutoPaymentModel().getMany(cond)

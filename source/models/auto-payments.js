@@ -46,7 +46,7 @@ class AutoPayments extends DbModel {
 	 * @returns {Promise.<void>}
 	 */
 	async setDone(id) {
-		await this._update({id}, {isDone:  false});
+		await this._update({id}, {isDone:  true});
 	}
 
 	async extendForWeek(item) {
