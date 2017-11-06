@@ -36,11 +36,12 @@ async function scheduleAutoPaymentJob() {
 			isDone: false
 		};
 		const autoPaymentModel = new AutoPaymentModel();
-		const cardModel = new CardsModel();
+		const cardsModel = new CardsModel();
 		const transactionModel = new TransactionModel();
 		const autoPayments = await autoPaymentModel.getMany(cond);
 		for (const autoPayment of autoPayments){
-			await cardModel.withdraw(autoPayment.cardId, autoPayment.sum);
+			const card = cardsModel.get(autoPayment.cardId);
+			await cardsModel.withdraw(autoPayment.cardId, autoPayment.sum);
 			if (autoPayment.receiverType === 'cardPayment') {
 				await transactionModel.create({
 					cardId: autoPayment.cardId,
@@ -74,12 +75,13 @@ async function scheduleAutoPaymentJob() {
 }
 
 async function setAutoPaymentDoneOrExtend(autoPayment) {
+	const autoPaymentModel = new AutoPaymentModel()
 	if (autoPayment.dateRepeat === 'none') {
-		await new AutoPaymentModel().setDone(autoPayment.id);
+		await autoPaymentModel.setDone(autoPayment.id);
 	} else if (autoPayment.dateRepeat === 'weekly') {
-		await new AutoPaymentModel().extendForWeek(autoPayment);
+		await autoPaymentModel.extendForWeek(autoPayment);
 	} else if (autoPayment.dateRepeat === 'monthly') {
-		await new AutoPaymentModel().extendForMonth(autoPayment);
+		await autoPaymentModel.extendForMonth(autoPayment);
 	} else {
 		console.error('AutoPayment DoneOrExtend Error');
 	}
