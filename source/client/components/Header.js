@@ -25,7 +25,7 @@ const BalanceSum = styled.span`
 const Header = ({activeCard, user}) => (
 	<HeaderLayout>
 		<Balance>
-			{activeCard ? `${activeCard.hasOwnProperty('bankName') ? activeCard.bankName : 'Ваш баланс'}: ` : ''}
+			{activeCard ? `${activeCard['bankName'] ? activeCard.bankName : 'Ваш баланс'}: ` : ''}
 			<BalanceSum>{activeCard ? `${activeCard.balance} ₽` : ''}</BalanceSum>
 		</Balance>
 		<UserInfo user={user} />
