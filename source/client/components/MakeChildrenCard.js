@@ -121,8 +121,12 @@ class MakeChildrenCard extends Component {
 
 	/**
 	 * Повторить создание дочерний карты
+	 * @param {Event} event событие отправки формы
 	 */
-	repeatMake() {
+	repeatMake(e) {
+		if (e) {
+			e.preventDefault();
+		}
 		this.setState({
 			success: false
 		});
@@ -170,28 +174,28 @@ class MakeChildrenCard extends Component {
 		else {
 			return (
 				<NewCardPaymentLayout>
-					<form onSubmit={() => this.repeatMake()}>
+					<form onSubmit={(e) => this.repeatMake(e)}>
 						<NewCardPaymentTitle>Дочерняя карта создана!</NewCardPaymentTitle>
 						<InputField>
 							<Label>Логин</Label>
 							<InputCardNumber
 								name='login'
 								value={this.state.cardNumber}
-								readonly={'true'}/>
+								disable={true}/>
 						</InputField>
 						<InputField>
 							<Label>Номер карты</Label>
 							<InputCardNumber
 								name='cardNumber'
 								value={this.state.cardNumber}
-								readonly={'true'}/>
+								disable={true}/>
 						</InputField>
 						<InputField>
 							<Label>Баланс</Label>
 							<InputBalance
 								name='balance'
 								value={this.state.balance}
-								readonly={'true'}/>
+								disable={true}/>
 							<Currency>₽</Currency>
 						</InputField>
 						<Underline/>

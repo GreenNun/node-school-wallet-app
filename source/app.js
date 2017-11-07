@@ -60,6 +60,14 @@ const getData = async (ctx) => {
 	delete user.password;
 	const cards = await ctx.cardsModel.getAll(user.id);
 	const transactions = await ctx.transactionsModel.getAll(user.id);
+	for (const card of cards) {
+		const dependentCards = await ctx.cardsModel.getDependent(card.id);
+		const dependentTransactions = await ctx.transactionsModel.getMany({"cardId": {"$in": dependentCards}});
+		for (const dependentTransaction of dependentTransactions) {
+			dependentTransaction.cardId = card.id;
+			transactions.push(dependentTransaction);
+		}
+	}
 
 	return {
 		user,
@@ -101,6 +109,19 @@ router.get('/transactions/', getTransactionsController);
 
 router.post('/users/create', createUserController);
 router.post('/users/login', loginUserController);
+router.get('/users/logout/', async (ctx, next) => {
+	ctx.logout();
+	ctx.redirect('/sign-in.html');
+	await next();
+});
+router.get('/users/gettoken/', async (ctx, next) => {
+	if (ctx.isAuthenticated()) {
+		ctx.body = 'Ваш токен: ' + ctx.state.user.token;
+	} else {
+		ctx.redirect('/sign-in.html');
+	}
+	await next();
+});
 
 router.all('/error', errorController);
 

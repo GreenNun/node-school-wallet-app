@@ -1,6 +1,18 @@
 import React from 'react';
 import styled from 'emotion/react';
 import PropTypes from 'prop-types';
+import {Menu, Dropdown, Icon} from 'antd';
+
+const menu = (
+	<Menu>
+		<Menu.Item>
+			<a target="_blank" rel="noopener noreferrer" href="/users/gettoken">Получить токен</a>
+		</Menu.Item>
+		<Menu.Item>
+			<a rel="noopener noreferrer" href="/users/logout">Выйти</a>
+		</Menu.Item>
+	</Menu>
+);
 
 const User = styled.div`
 	display: flex;
@@ -19,7 +31,11 @@ const Avatar = styled.img`
 const UserInfo = ({user}) => (
 	<User>
 		<Avatar src='/assets/avatar.png' />
-		{`${user.name} ${user.surname}`}
+		<Dropdown overlay={menu}>
+			<a className="ant-dropdown-link" href="#">
+				{`${user.name} ${user.surname}`} <Icon type="down"/>
+			</a>
+		</Dropdown>
 	</User>
 );
 
