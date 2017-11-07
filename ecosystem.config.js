@@ -27,6 +27,19 @@ module.exports = {
 			env_production: {
 				NODE_ENV: 'production'
 			}
+		},
+		{
+			name: 'sheduler',
+			script: 'source/schedule.js',
+			env: {
+				NODE_PATH: '.'
+			},
+			env_development: {
+				NODE_ENV: 'development'
+			},
+			env_production: {
+				NODE_ENV: 'production'
+			}
 		}
 	]
 };
