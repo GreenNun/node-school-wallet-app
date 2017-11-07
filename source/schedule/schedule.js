@@ -68,7 +68,6 @@ async function scheduleAutoPaymentJob() {
 			}
 			await setAutoPaymentDoneOrExtend(autoPayment);
 		}
-		console.log('schedule!');
 	} catch (e) {
 		console.error('Autopayment error:', e.message)
 	}
