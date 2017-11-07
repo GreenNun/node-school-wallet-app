@@ -5,7 +5,7 @@ const commission = 3;
 module.exports = async (ctx) => {
 	const cardId = ctx.params.id;
 	const payload = ctx.request.body;
-	const {sum, date, receiverType, receiverNumber} = payload;
+	const {sum, date, receiverType, receiverNumber, dateRepeat} = payload;
 
 	const autoPayment = await ctx.autoPaymentModel.create({
 		cardId: cardId,
@@ -13,7 +13,8 @@ module.exports = async (ctx) => {
 		date: date,									// new Date().toISOString(),
 		receiverType: receiverType,
 		receiverNumber: receiverNumber,
-		isDone: false
+		isDone: false,
+		dateRepeat: dateRepeat
 	});
 
 	ctx.status = 200;
