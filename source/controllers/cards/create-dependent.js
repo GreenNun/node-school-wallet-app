@@ -13,6 +13,9 @@ module.exports = async (ctx) => {
     /**
      * Тут ставится автоплатеж
      */
+
+
+
     ctx.status = 201;
     ctx.body = newCard;
 };
