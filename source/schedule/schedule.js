@@ -40,11 +40,7 @@ async function scheduleAutoPaymentJob() {
 		const transactionModel = new TransactionModel();
 		const autoPayments = await autoPaymentModel.getMany(cond);
 		for (const autoPayment of autoPayments) {
-			let card = {};
-			await cardsModel.get(autoPayment.cardId)
-				.then((res) => {
-					card = res;
-				});
+			const card = await cardsModel.get(autoPayment.cardId);
 			await cardsModel.withdraw(autoPayment.cardId, autoPayment.sum);
 			if (autoPayment.receiverType === 'cardPayment') {
 				await transactionModel.create({
