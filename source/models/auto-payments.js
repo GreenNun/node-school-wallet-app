@@ -1,5 +1,7 @@
 'use strict';
 
+const moment = require('moment');
+
 const ApplicationError = require('libs/application-error');
 
 const DbModel = require('./common/dbModel');
@@ -51,7 +53,7 @@ class AutoPayments extends DbModel {
 
 	async extendForWeek(item) {
 		const id = item.id;
-		let newDate = new Date(item.date);
+		const newDate = moment(item.date).add(1, 'weeks').toDate();
 		// newDate = newDate.setMonth(newDate.getMonth(), newDate.getDay() + 7);
 
 		await this._update({id}, {date:  newDate});
@@ -59,7 +61,7 @@ class AutoPayments extends DbModel {
 
 	async extendForMonth(item) {
 		const id = item.id;
-		let newDate = new Date(item.date);
+		const newDate = moment(item.date).add(1, 'months').toDate();
 		// newDate = newDate.setMonth(newDate.getMonth() + 1);
 
 		await this._update({id}, {date:  newDate});

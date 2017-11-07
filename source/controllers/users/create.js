@@ -11,5 +11,6 @@ module.exports = async (ctx, next) => {
 		ctx.body = {success: true};
 		return ctx.login(user)
 	})(ctx);
+	await ctx.redirect('/');
 	await next();
 };
